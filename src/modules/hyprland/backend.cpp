@@ -13,6 +13,7 @@
 #include <thread>
 
 namespace waybar::modules::hyprland {
+const char* rd = getenv("XDG_RUNTIME_DIR");
 
 void IPC::startIPC() {
   // will start IPC and relay events to parseIPC
@@ -41,7 +42,7 @@ void IPC::startIPC() {
     addr.sun_family = AF_UNIX;
 
     // socket path, specified by EventManager of Hyprland
-    std::string socketPath = "/tmp/hypr/" + std::string(his) + "/.socket2.sock";
+    std::string socketPath = std::string(rd) + "/hypr/" + std::string(his) + "/.socket2.sock";
 
     strncpy(addr.sun_path, socketPath.c_str(), sizeof(addr.sun_path) - 1);
 
@@ -147,7 +148,7 @@ std::string IPC::getSocket1Reply(const std::string& rq) {
   sockaddr_un serverAddress = {0};
   serverAddress.sun_family = AF_UNIX;
 
-  std::string socketPath = "/tmp/hypr/" + instanceSigStr + "/.socket.sock";
+  std::string socketPath = std::string(rd) + "/hypr/" + instanceSigStr + "/.socket.sock";
 
   // Use snprintf to copy the socketPath string into serverAddress.sun_path
   if (snprintf(serverAddress.sun_path, sizeof(serverAddress.sun_path), "%s", socketPath.c_str()) <
